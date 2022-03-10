@@ -1,48 +1,67 @@
-import React,{useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import firebase from '../firebase';
 import moment from 'moment'
 function PostsDetails(props) {
-  const [post,setPost]=useState();
-  const { id } = useParams();
- console.log("🚀 ~ file: PostsDetails.jsx ~ line 8 ~ PostsDetails ~ id", id)
- const postId = id ;
- const  postRef = firebase.collection("posts").doc(postId);
-  useEffect(()=>{
-    getPost();
-  
-},[post]);
-const  getPost = () =>{
-  postRef.get().then(doc=>{
-    setPost({...doc.data(),id : doc.id})
-  })
-}
-const voteUp = postId =>{
-  const post = firebase.collection("posts").doc(postId);
-  console.log("🚀 ~ file: Posts.jsx ~ line 27 ~ Posts ~ post", post)
+    const [post, setPost] = useState();
+    const [comment, setComment] = useState();
 
-  post.get().then(doc=>{
-      if(doc.exists){
-          const previousVoteCount = doc.data().vote_count;
-          post.update({vote_count: previousVoteCount + 1 })
-      }
-  })
-}
-const voteDown = postId =>{
-  const post = firebase.collection("posts").doc(postId);
-  post.get().then(doc=>{
-      if(doc.exists){
-          const previousVoteCount = doc.data().vote_count;
-          post.update({vote_count: previousVoteCount - 1 })
-      }
-  })
-}
-const renderPosts = ()=>{
-  return (     post && (
-            <div  className='posts'>
-  <div className="posts">
+    const { id } = useParams();
+    const postId = id;
+    const postRef = firebase.collection("posts").doc(postId);
+    useEffect(() => {
+        getPost();
+
+    }, [post]);
+    const getPost = () => {
+        postRef.get().then(doc => {
+            setPost({ ...doc.data(), id: doc.id })
+        })
+    }
+    const voteUp = postId => {
+        const post = firebase.collection("posts").doc(postId);
+
+        post.get().then(doc => {
+            if (doc.exists) {
+                const previousVoteCount = doc.data().vote_count;
+                post.update({ vote_count: previousVoteCount + 1 })
+            }
+        })
+    }
+    const voteDown = postId => {
+        const post = firebase.collection("posts").doc(postId);
+        post.get().then(doc => {
+            if (doc.exists) {
+                const previousVoteCount = doc.data().vote_count;
+                post.update({ vote_count: previousVoteCount - 1 })
+            }
+        })
+    }
+    const addComment = ()=>{
+postRef.get().then(doc => {
+    if(doc.exists){
+        const previousComments = doc.data().comments || [];
+        const commentText = {
+            postedBy : {id : "333" , name:"azddedine"},
+            created : Date.now(),
+            text:comment
+        }
+        const commentsUpdated = [...previousComments,commentText];
+        postRef.update({comments : commentsUpdated});
+        setPost(prevState=> ({
+            ...prevState, comments : commentsUpdated
+        }));
+        setComment("");
+    }
+    
+});
+    };
+    const renderPosts = () => {
+        return (post && (
+            <div className='posts'>
+                <div className="posts">
                     <div className="post">
                         <div className="post-image img">
                             <img src={post.image} alt=""     ></img>
@@ -51,7 +70,7 @@ const renderPosts = ()=>{
                             <h3 className="post-title">   {post.title}                </h3>
                             <h5 className="post-details">
                                 <span className="posted-by">
-                                  {post.postedBy.name}
+                                    {post.postedBy.name}
                                 </span>
 
                                 <span className="date">{moment(post.created_at).local('fr').fromNow()}</span>
@@ -66,10 +85,10 @@ const renderPosts = ()=>{
                             </p>
                             <div className="votes">
                                 <div className="votes">
-                                    <div className="up" onClick={()=>voteUp(post.id)} >
+                                    <div className="up" onClick={() => voteUp(post.id)} >
                                         &#8593;
                                     </div>
-                                    <div className="down" onClick={()=>voteDown(post.id)}>
+                                    <div className="down" onClick={() => voteDown(post.id)}>
                                         &#8595;
                                     </div>
                                     <div className='count'>{post.vote_count}</div>
@@ -78,27 +97,59 @@ const renderPosts = ()=>{
 
                             </div>
 
+                        
+
 
                         </div>
+                        
                     </div>
+                    <div className="comments">
 
+<h3>  Commentaires :  {post.comments && post.comments.length} </h3>
+</div>
+<div>
+<textarea name="" id="" cols="25" rows="5" placeholder='commentaire' value={comment} onChange={(event)=>setComment(event.target.value)} className='form-control'>
+
+</textarea>
+</div>
+<div>
+<button onClick={() => addComment()} className='btn btn-primary'>Ajouter </button>
+</div>
+{
+post.comments && post.comments.map((comment, index) => (
+    <div key={index} >
+        
+        <p className='comment-author'>
+
+            {comment.postedBy.name} | {" "}
+            {
+                moment(comment.created).locale('fr')
+                    .format('MMM Do YYYY , h:mm:ss a')
+
+            }
+            <p className='comment '>{comment.text}  </p>
+        </p>
+
+    </div>
+))
+}
                 </div>
             </div>
         ))
-  
+
     }
-  
-  return (
-      <div className='posts'>
-          {
+
+    return (
+        <div className='posts'>
+            {
                 renderPosts()
-          }
-      </div>
-  )
-    
-    
-    
-  
+            }
+        </div>
+    )
+
+
+
+
 }
 
 export default PostsDetails
