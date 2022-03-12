@@ -9,12 +9,15 @@ import CreatePosts from './components/CreatePosts';
 import Header from './components/Header';
 import Register from './components/Register';
 import Login from './components/Login';
-import {firebaseAuth} from  './firebase'
+import {firebaseAuth} from  './firebase';
+import AuthContext from './components/AuthContext';
+
 
 
 function App() {
 
    const [authUser,setAuthUser] = useState(null);
+   
 React.useEffect(()=>{
   const unsubscribe = firebaseAuth.onAuthStateChanged(user=>{
     if(user){
@@ -32,7 +35,7 @@ React.useEffect(()=>{
     <BrowserRouter>
       <div className="container">
 
-
+     <AuthContext.Provider value={{authUser ,firebaseAuth }}>
         <Header/>
       <Routes>
       <Route path="/" element={<Posts />} />
@@ -41,6 +44,7 @@ React.useEffect(()=>{
           <Route path='/login' element = {<Login/>} />
           <Route path='/register' element ={<Register/>} />
           </Routes>
+          </AuthContext.Provider>
       </div>
     </BrowserRouter>
   );

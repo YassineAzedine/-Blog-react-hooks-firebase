@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Fragment } from 'react'
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import firebase from '../firebase';
 import moment from 'moment'
+import AuthContext from '../components/AuthContext';
+import {NavLink} from 'react-router-dom';
+
+
+ 
 function PostsDetails(props) {
     const [post, setPost] = useState();
     const [comment, setComment] = useState();
@@ -11,6 +16,8 @@ function PostsDetails(props) {
     const { id } = useParams();
     const postId = id;
     const postRef = firebase.collection("posts").doc(postId);
+    const {authUser} = React.useContext(AuthContext);
+
     useEffect(() => {
         getPost();
 
@@ -44,7 +51,7 @@ postRef.get().then(doc => {
     if(doc.exists){
         const previousComments = doc.data().comments || [];
         const commentText = {
-            postedBy : {id : "333" , name:"azddedine"},
+            postedBy : {id : authUser.uid , name: authUser.displayName},
             created : Date.now(),
             text:comment
         }
@@ -107,14 +114,28 @@ postRef.get().then(doc => {
 
 <h3>  Commentaires :  {post.comments && post.comments.length} </h3>
 </div>
-<div>
-<textarea name="" id="" cols="25" rows="5" placeholder='commentaire' value={comment} onChange={(event)=>setComment(event.target.value)} className='form-control'>
+{
+        authUser ? (
+            <Fragment>
+            <div>
+   
+            <textarea name="" id="" cols="25" rows="5" placeholder='commentaire' value={comment} onChange={(event)=>setComment(event.target.value)} className='form-control'>
+            
+            </textarea>
+            </div>
+            <div>
+            <button onClick={() => addComment()} className='btn btn-primary'>Ajouter </button>
+            </div>  
+            </Fragment>
 
-</textarea>
-</div>
-<div>
-<button onClick={() => addComment()} className='btn btn-primary'>Ajouter </button>
-</div>
+        )
+        :(
+      
+            <NavLink to="/login" >Connectez vous pour connecter </NavLink>
+
+        )
+    }
+
 {
 post.comments && post.comments.map((comment, index) => (
     <div key={index} >

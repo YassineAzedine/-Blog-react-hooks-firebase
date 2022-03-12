@@ -24,21 +24,21 @@ import  { Redirect } from 'react-router-dom'
    
     email : '',
     password:''
-    })
-  }
+    });
+  };
   const login = ({
     email,password
-  }) =>{
+  }) => 
+  {
     const LoggedUser = firebaseAuth.signInWithEmailAndPassword(email,password)
     .then(userLogged =>{
-      userLogged.user.updateProfile({
      
-      });
       return userLogged;
     })
+    console.log("🚀 ~ file: Login.jsx ~ line 34 ~ Login ~ LoggedUser", LoggedUser)
 
-    console.log(LoggedUser);
-window.location = "/";
+  //  props.history.push('/')
+    
   }
     return (
    <div className="form-container">
@@ -51,7 +51,7 @@ window.location = "/";
 <input type="email"
  name ="email"
  required
- className='form-controle'
+ className='form-control'
  placeholder='email'
  autoComplete='off'
   onChange={handeleInputChange }
@@ -59,8 +59,8 @@ window.location = "/";
  <input type="password"
  name ="password"
  required
- className='form-controle'
- placeholder='nom & prenom'
+ className='form-control'
+ placeholder='password'
  autoComplete='off'
   onChange={handeleInputChange }
  value={userCredentails.password} />

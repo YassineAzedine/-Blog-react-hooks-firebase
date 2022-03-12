@@ -20,7 +20,7 @@ import  { Redirect } from 'react-router-dom'
   const onSubmited = event =>{
     event.preventDefault();
     setSubmitted(true);
-    register(userCredentails)
+    register(userCredentails);
     setUserCredentailes({
       name : '' , 
     email : '',
@@ -31,15 +31,17 @@ import  { Redirect } from 'react-router-dom'
     name,email,password
   }) =>{
     const newUser = firebaseAuth.createUserWithEmailAndPassword (email,password)
+
     .then(userCreated =>{
       userCreated.user.updateProfile({
         displayName : name
       });
       return userCreated;
     })
+    console.log("🚀 ~ file: Register.jsx ~ line 34 ~ Register ~ newUser", newUser)
 
-    console.log(newUser);
-window.location = "/login";
+  
+
   }
     return (
    <div className="form-container">
@@ -50,7 +52,7 @@ window.location = "/login";
 <input type="text"
  name ="name"
  required
- className='form-controle'
+ className='form-control'
  placeholder='nom & prenom'
  autoComplete='off'
   onChange={handeleInputChange }
@@ -59,7 +61,7 @@ window.location = "/login";
 <input type="email"
  name ="email"
  required
- className='form-controle'
+ className='form-control'
  placeholder='email'
  autoComplete='off'
   onChange={handeleInputChange }
@@ -67,7 +69,7 @@ window.location = "/login";
  <input type="password"
  name ="password"
  required
- className='form-controle'
+ className='form-control'
  placeholder='nom & prenom'
  autoComplete='off'
   onChange={handeleInputChange }
