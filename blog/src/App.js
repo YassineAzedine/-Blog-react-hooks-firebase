@@ -1,3 +1,4 @@
+import React, {useState} from 'react'
 
 import './App.css';
 import logo from './logo.svg';
@@ -8,10 +9,26 @@ import CreatePosts from './components/CreatePosts';
 import Header from './components/Header';
 import Register from './components/Register';
 import Login from './components/Login';
+import {firebaseAuth} from  './firebase'
 
 
 function App() {
-  return (
+
+   const [authUser,setAuthUser] = useState(null);
+React.useEffect(()=>{
+  const unsubscribe = firebaseAuth.onAuthStateChanged(user=>{
+    if(user){
+      setAuthUser(user);
+      console.log(user);
+    }else{
+      setAuthUser(null)
+    }
+  });
+  return ()=>{
+    unsubscribe()
+  }
+},[])
+     return (
     <BrowserRouter>
       <div className="container">
 
@@ -22,8 +39,7 @@ function App() {
           <Route path='/post/:id' element ={<PostsDetails/>} />
           <Route path='/create'element ={<CreatePosts/>} />
           <Route path='/login' element = {<Login/>} />
-
-          <Route path='/register' exact component={<Register/>} />
+          <Route path='/register' element ={<Register/>} />
           </Routes>
       </div>
     </BrowserRouter>
