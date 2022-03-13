@@ -17,11 +17,24 @@ function PostsDetails(props) {
     const postId = id;
     const postRef = firebase.collection("posts").doc(postId);
     const {authUser} = React.useContext(AuthContext);
+  
 
     useEffect(() => {
+        let isSubscribed = true;
+        
+       postRef.get().then(doc => {
+        if(isSubscribed){
+           setPost({
+               ...doc.data(), id:doc.id 
+           });
+        }
+       })
+       return  ()=>(isSubscribed = false)
+             
+        
         getPost();
 
-    }, [post]);
+    }, [post,postRef]);
     const getPost = () => {
         postRef.get().then(doc => {
             setPost({ ...doc.data(), id: doc.id })

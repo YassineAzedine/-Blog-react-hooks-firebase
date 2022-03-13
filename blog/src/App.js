@@ -8,6 +8,10 @@ import PostsDetails from './components/PostsDetails';
 import CreatePosts from './components/CreatePosts';
 import Header from './components/Header';
 import Register from './components/Register';
+import Search from './components/Search';
+
+
+
 import Login from './components/Login';
 import {firebaseAuth} from  './firebase';
 import AuthContext from './components/AuthContext';
@@ -43,6 +47,8 @@ React.useEffect(()=>{
           <Route path='/create'element ={<CreatePosts/>} />
           <Route path='/login' element = {<Login/>} />
           <Route path='/register' element ={<Register/>} />
+          <Route path='/search' element ={<Search/>} />
+
           </Routes>
           </AuthContext.Provider>
       </div>
